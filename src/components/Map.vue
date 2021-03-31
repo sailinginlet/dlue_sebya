@@ -62,7 +62,20 @@
         marker_description_type_1: '',
         markers: [],
         marker_id: '',
-        marker_id_delete: ''
+        marker_id_delete: '',
+
+        yan: 0,
+        fev: 0,
+        mar: 0,
+        apr: 0,
+        mai: 0,
+        yun: 0,
+        yul: 0,
+        avg: 0,
+        sen: 0,
+        okt: 0,
+        noy: 0,
+        dek: 0
       }
     },
     created() {
@@ -89,6 +102,9 @@
         this.marker_id_delete = this.marker_id_delete + 1;
         this.markers.splice(this.marker_id_delete, 1);
         console.log('Удалился индекс: ' + this.marker_id_delete)
+
+        const parsed = JSON.stringify(this.markers);
+        localStorage.setItem('markers', parsed);
       })
       this.$getLocation({})
         .then(coordinates => {
@@ -105,12 +121,67 @@
             position: e.latLng,
             infoText: this.map_year_1 + ' год ' + this.map_number_1 + ' ' + this.map_month_1 + ' - ' + this.marker_description_1,
           });
+
+          const parsed = JSON.stringify(this.markers);
+          localStorage.setItem('markers', parsed);
+
+          if(this.map_month_1 == 'Января') {
+            this.yan = this.yan + 1
+            bus.$emit('yan', this.yan);
+          }
+          if(this.map_month_1 == 'Февраля') {
+            this.fev = this.fev + 1
+            bus.$emit('fev', this.fev);
+          }
+          if(this.map_month_1 == 'Марта') {
+            this.mar = this.mar + 1
+            bus.$emit('mar', this.mar);
+          }
+          if(this.map_month_1 == 'Апреля') {
+            this.apr = this.apr + 1
+            bus.$emit('apr', this.apr);
+          }
+          if(this.map_month_1 == 'Мая') {
+            this.mai = this.mai + 1
+            bus.$emit('mai', this.mai);
+          }
+          if(this.map_month_1 == 'Июня') {
+            this.yun = this.yun + 1
+            bus.$emit('yun', this.yun);
+          }
+          if(this.map_month_1 == 'Июля') {
+            this.yul = this.yul + 1
+            bus.$emit('yul', this.yul);
+          }
+          if(this.map_month_1 == 'Августа') {
+            this.avg = this.avg + 1
+            bus.$emit('avg', this.avg);
+          }
+          if(this.map_month_1 == 'Сентября') {
+            this.sen = this.sen + 1
+            bus.$emit('sen', this.sen);
+          }
+          if(this.map_month_1 == 'Октября') {
+            this.okt = this.okt + 1
+            bus.$emit('okt', this.okt);
+          }
+          if(this.map_month_1 == 'Ноября') {
+            this.noy = this.noy + 1
+            bus.$emit('noy', this.noy);
+          }
+          if(this.map_month_1 == 'Декабря') {
+            this.dek = this.dek + 1
+            bus.$emit('dek', this.dek);
+          }
         } else {
           this.markers.push({
             id: this.marker_id,
             position: e.latLng,
             infoText: ''
           });
+
+          const parsed = JSON.stringify(this.markers);
+          localStorage.setItem('markers', parsed);
         }
         this.marker_description_type_1 = false
       },
@@ -129,6 +200,15 @@
             this.infoWinOpen = true;
             this.currentMidx = idx;
           }
+        }
+      }
+    },
+    mounted() {
+      if (localStorage.getItem('markers')) {
+        try {
+          this.markers = JSON.parse(localStorage.getItem('markers'));
+        } catch(e) {
+          localStorage.removeItem('markers');
         }
       }
     }

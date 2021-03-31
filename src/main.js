@@ -1,15 +1,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store/index'
 import VueGeolocation from 'vue-browser-geolocation'
 import vSelect from 'vue-select'
-import VueAwesomeSwiper from 'vue-awesome-swiper'
 import {Swiper as SwiperClass, Mousewheel} from 'swiper/core';
+SwiperClass.use([Mousewheel]);
 
 Vue.config.productionTip = false
 Vue.use(VueGeolocation)
-Vue.use(VueAwesomeSwiper)
-SwiperClass.use([Mousewheel]);
 
 Vue.component('v-select', vSelect)
 import 'vue-select/dist/vue-select.css';
@@ -30,6 +29,7 @@ export const bus = new Vue();
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

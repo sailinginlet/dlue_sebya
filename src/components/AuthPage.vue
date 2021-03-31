@@ -16,7 +16,7 @@
 					<input type="password" placeholder="Пароль" v-model="password_login">
 					<div class="recovery-1">
 						<label>
-							<input type="checkbox">
+							<input type="checkbox" v-model="remember_me">
 							<h5 class="auth grey">Запомнить меня</h5>
 						</label>
 						<h5 class="auth blue"><a href="#">Не можете войти в систему?</a></h5>
@@ -97,6 +97,7 @@
 </style>
 <script>
 	import axios from 'axios';
+	import { bus } from '../main'
 
 	export default {
 		data() {
@@ -113,18 +114,21 @@
 				error_text_reg: '',
 				error_active_reg: false,
 				info_text: '',
-				info_block_auth: false
+				info_block_auth: false,
+				remember_me: ''
 			}
 		},
 		methods: {
 			button_auth() {
+				if (this.remember_me != true) {this.remember_me = false}
 				this.error_active_auth = false,
 				this.info_block_auth = false
 				if (this.email_login != '' && this.password_login != '') {
 					axios
 	  				.post('http://service.auto.xsph.ru/login', {
 	  					email: this.email_login,
-	    				password: this.password_login
+	    				password: this.password_login,
+	    				remember: this.remember_me
 	  				})
 	  				.then(response => {
 	  					if (response.data.error != '') {
@@ -133,7 +137,11 @@
 	  					}
 	  					if (response.data.auth == "true") {
 	  						console.log(response),
+	  						this.$store.commit('get_user_name'),
 	  						this.$router.push('MapPage')
+	  						bus.$emit('user_email', this.email_login)
+	  						console.log('email пользователя: ' + this.email_login)
+	  						console.log('Логин закончен')
 	  					}
 	  				})
 	  				.catch(error => {
@@ -144,30 +152,32 @@
 			button_reg() {
 				this.error_active_reg = false
 				if (this.name_register != '' && this.email_register != '' && this.password_register != '' && this.password_register_confirm != '') {
-					if (this.password_register == this.password_register_confirm) {
-						axios
-		  				.post('http://service.auto.xsph.ru/register', {
-		  					name: this.name_register,
-		    				email: this.email_register,
-		    				password: this.password_register
-		  				})
-		  				.then(response => {
-		  					if (response.data.error != '') {
-	  							this.error_active_reg = true,
-	  							this.error_text_reg = response.data.error
-	  						}
-	  						if (response.data.auth == "true") {
-	  							console.log(response.data),
-	  							this.isActive = true,
-	  							this.info_text_auth = 'Вы успешно зарегистрировались. Авторизируйтесь',
-	  							this.info_block_auth = true,
-	  							this.error_active_auth = false
-	  						}
-		  				})
-		  				.catch(error => {
-		  					console.log(error)
-		  				})
-	  				} else {this.error_text_reg = 'Поля "Подтвердите пароль" и "Пароль" не совпадают!', this.error_active_reg = true}
+					if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email_register)) {
+						if (this.password_register == this.password_register_confirm) {
+							axios
+			  				.post('http://service.auto.xsph.ru/register', {
+			  					name: this.name_register,
+			    				email: this.email_register,
+			    				password: this.password_register
+			  				})
+			  				.then(response => {
+			  					if (response.data.error != '') {
+		  							this.error_active_reg = true,
+		  							this.error_text_reg = response.data.error
+		  						}
+		  						if (response.data.auth == "true") {
+		  							console.log(response.data),
+		  							this.isActive = true,
+		  							this.info_text_auth = 'Вы успешно зарегистрировались. Авторизируйтесь',
+		  							this.info_block_auth = true,
+		  							this.error_active_auth = false
+		  						}
+			  				})
+			  				.catch(error => {
+			  					console.log(error)
+			  				})
+		  				} else {this.error_text_reg = 'Поля "Подтвердите пароль" и "Пароль" не совпадают!', this.error_active_reg = true}
+		  			} else {this.error_text_reg = 'Электронная почта не верна', this.error_active_reg = true}
 	  			} else {this.error_text_reg = 'Заполните все поля!', this.error_active_reg = true}
 			}
 		}

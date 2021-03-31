@@ -16,7 +16,7 @@
   		  <div class="map-page__title">
         		<h1>Мои путешествия</h1>
       	</div>
-      	<div class="map-page__suptitle">
+      	<div class="map-page__suptitle" v-on:click="checkk">
         		<p>В хронологии на Google Картах вы можете посмотреть свои маршруты, а также места, в которых вы побывали. Это приблизительная информация, которая определяется на основе истории местоположений. Вы также можете изменить или удалить информацию в хронологии. Ваша хронология видна только вам и доступна как на мобильных устройствах, так и на компьютере.</p>
       	</div>
       	<div class="map-page__main">
@@ -35,28 +35,38 @@
         		</div>
       	</div>
       	<div class="map-page__interface">
-          <div v-for='(item, index) in items'>
-            <div class="map-page__interface-item" @click="marker_description = item.description" v-on:click="marker_description_window_open">
-              <div class="marker-title">
-                {{ item.title }}
-              </div>
-              <div class="marker-date">
-                {{ item.date }}
-              </div>
-              <div class="marker-description" v-if="item.description != undefined">
-                Нажмите, чтобы просмотреть заметку
-              </div>
-              <div class="marker-delete" @click="marker_delete_index = item.id" v-on:click="marker_delete">
-                <img src="https://img.icons8.com/ios-glyphs/30/000000/close-window.png"/> 
-              </div>
-            </div>
-          </div>
+          <swiper class="swiper" :options="swiperOption">
+           
+              <swiper-slide v-for='(item, index) in items'>
+                <div class="map-page__interface-item" @click="marker_description = item.description" v-on:click="marker_description_window_open">
+                  <div class="marker-title">
+                    {{ item.title }}
+                  </div>
+                  <div class="marker-date">
+                    {{ item.date }}
+                  </div>
+                  <div class="marker-description" v-if="item.description != undefined">
+                    Нажмите, чтобы просмотреть заметку
+                  </div>
+                  <div class="marker-delete" @click="marker_delete_index = item.id" v-on:click="marker_delete">
+                    <div @click="marker_description = item.description">
+                      <img src="https://img.icons8.com/ios-glyphs/30/000000/close-window.png"/> 
+                    </div>
+                  </div>
+                </div>
+              </swiper-slide>
+              
+            
+          </swiper>
       	</div>
         <Footer/>
       </div>
     </div>
 </template>
 <script>
+  import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+  import 'swiper/swiper-bundle.css'
+
   import { bus } from '../main';
 
 	import Map from './Map'
@@ -65,6 +75,8 @@
   import Header from './Header'
   import Footer from './Footer'
   import Messager from './Messager'
+
+  import axios from 'axios';
 	export default {
 		components: {
 			Map,
@@ -72,7 +84,9 @@
 			MapMenuChart,
       Header,
       Footer,
-      Messager
+      Messager,
+      Swiper,
+      SwiperSlide
 		},
     data() {
       return {
@@ -86,8 +100,17 @@
         marker_description_get: '',
         marker_description: '',
         marker_description_window_type: -1,
-        markers_count: [],
-        message_block_status: -1
+        message_block_status: -1,
+        checkkk: '',
+        swiperOption: {
+          slidesPerView: 'auto',
+          spaceBetween: 10,
+          mousewheel: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          }
+        }
       }
     },
     methods: {
@@ -97,20 +120,9 @@
           title: 'Метка ' + this.marker_interface_id,
           id: this.marker_interface_id
         });
-        if (this.marker_month = 'Января') {this.markers_count[1] = this.markers_count[1] + 1}
-        if (this.marker_month = 'Февраля') {this.markers_count[2] = this.markers_count[2] + 1}
-        if (this.marker_month = 'Марта') {this.markers_count[3] = this.markers_count[3] + 1}
-        if (this.marker_month = 'Апреля') {this.markers_count[4] = this.markers_count[4] + 1}
-        if (this.marker_month = 'Мая') {this.markers_count[5] = this.markers_count[5] + 1}
-        if (this.marker_month = 'Июня') {this.markers_count[6] = this.markers_count[6] + 1}
-        if (this.marker_month = 'Июля') {this.markers_count[7] = this.markers_count[7] + 1}
-        if (this.marker_month = 'Августа') {this.markers_count[8] = this.markers_count[8] + 1}
-        if (this.marker_month = 'Сентября') {this.markers_count[9] = this.markers_count[9] + 1}
-        if (this.marker_month = 'Октября') {this.markers_count[10] = this.markers_count[10] + 1}
-        if (this.marker_month = 'Ноября') {this.markers_count[11] = this.markers_count[11] + 1}
-        if (this.marker_month = 'Декабря') {this.markers_count[12] = this.markers_count[12] + 1}
-
         bus.$emit('marker_interface_id', this.marker_interface_id);
+        const parsed = JSON.stringify(this.items);
+        localStorage.setItem('items', parsed);
       },
       addNewItemDesc() {
         this.marker_interface_id = this.marker_interface_id + 1,
@@ -120,44 +132,34 @@
           description: this.marker_description_get,
           id: this.marker_interface_id
         });
-        if (this.marker_month = 'Января') {this.markers_count[1] = this.markers_count[1] + 1}
-        if (this.marker_month = 'Февраля') {this.markers_count[2] = this.markers_count[2] + 1}
-        if (this.marker_month = 'Марта') {this.markers_count[3] = this.markers_count[3] + 1}
-        if (this.marker_month = 'Апреля') {this.markers_count[4] = this.markers_count[4] + 1}
-        if (this.marker_month = 'Мая') {this.markers_count[5] = this.markers_count[5] + 1}
-        if (this.marker_month = 'Июня') {this.markers_count[6] = this.markers_count[6] + 1}
-        if (this.marker_month = 'Июля') {this.markers_count[7] = this.markers_count[7] + 1}
-        if (this.marker_month = 'Августа') {this.markers_count[8] = this.markers_count[8] + 1}
-        if (this.marker_month = 'Сентября') {this.markers_count[9] = this.markers_count[9] + 1}
-        if (this.marker_month = 'Октября') {this.markers_count[10] = this.markers_count[10] + 1}
-        if (this.marker_month = 'Ноября') {this.markers_count[11] = this.markers_count[11] + 1}
-        if (this.marker_month = 'Декабря') {this.markers_count[12] = this.markers_count[12] + 1}
+        this.checkkk = this.items[this.items.length-1].description;
+        const parsed = JSON.stringify(this.items);
+        localStorage.setItem('items', parsed);
+
       },
       marker_delete(item) {
+        if(this.marker_description != undefined) {
+          this.marker_description_window_type = this.marker_description_window_type * -1
+        }
         let index = this.items.indexOf(item);
         bus.$emit('marker_delete', this.items.indexOf(item));
         console.log('Отправили на удаление индекс ' + this.items.indexOf(item))
         this.items.splice(index, 1);
+        const parsed = JSON.stringify(this.items);
+        localStorage.setItem('items', parsed);
       },
       marker_description_window_open() {
         if(this.marker_description != undefined) {
           this.marker_description_window_type = this.marker_description_window_type * -1
         }
+        console.log(items[0].description)
+      },
+      checkk() {
+        console.log('hsbefmiwergfihb')
+        console.log(this.checkkk)
       }
 	  },
     created() {
-      this.markers_count[1] = 0,
-      this.markers_count[2] = 0,
-      this.markers_count[3] = 0,
-      this.markers_count[4] = 0,
-      this.markers_count[5] = 0,
-      this.markers_count[6] = 0,
-      this.markers_count[7] = 0,
-      this.markers_count[8] = 0,
-      this.markers_count[9] = 0,
-      this.markers_count[10] = 0,
-      this.markers_count[11] = 0,
-      this.markers_count[12] = 0
       bus.$on('marker-interface-add', data => {
         if (this.description_marker_type_get == true) {
           this.addNewItemDesc();
@@ -185,6 +187,15 @@
       bus.$on('messager_title_close', data => {
         this.message_block_status = data;
       });
+    },
+    mounted() {
+      if (localStorage.getItem('items')) {
+        try {
+          this.items = JSON.parse(localStorage.getItem('items'));
+        } catch(e) {
+          localStorage.removeItem('items');
+        }
+      }
     }
   }
 </script>
@@ -192,6 +203,10 @@
   .map-description {margin-top: 60px;}
 </style>
 <style>
+  .swiper-slide:first-child {margin-left: 0px;}
+
+  .swiper-slide {margin-left: -150px;}
+
   .messager_block {position: fixed; z-index: 5000; top: 50%; left: 50%; transform: translate(-50%, -50%);}
   
   .marker-title {text-align: center; font-family: 'Proxima Nova Rg'; font-weight: bold; font-size: 25px; color: white;}

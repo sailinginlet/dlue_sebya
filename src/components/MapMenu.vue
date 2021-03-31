@@ -7,7 +7,7 @@
 			</div>
 			<div class="menu_chart">
 				<div class="menu_chart-item">
-					<MapMenuChart :height="100"/>
+					<MapMenuChart/>
 				</div>
 			</div>
 			<div class="menu_desc">
@@ -103,8 +103,9 @@
   	h2 {font-family: 'Proxima Nova Rg'; font-weight: normal; font-size: 23px; color: white; margin-left: 15px;}
   	.menu_title {width: 400px; height: 45px; background-color: white; display: flex; align-items: center;}
   	.menu_desc {width: 400px; height: 45px; background-color: #FFFAFA; z-index: 19;}
-  	.menu_chart {width: 400px !important; background-color: #eeeeee; z-index: 21;}
+  	.menu_chart {width: 400px !important; min-height: 110px !important; background-color: #eeeeee; z-index: 21;}
   	.menu_chart-item {display: flex; align-items: center; height: 110px; margin-left: -5px;}
+
   	.desc_title {width: 400px; height: 45px; background-color: #A9A9A9;}
   	input[type="text"] {width: 100%; height: 52px; outline: none; border-radius: 2px; border-color: #D7DEE9; border: 2px solid #D7DEE9; font-family: 'Proxima Nova Rg'; font-weight: normal; font-size: 20px; color: #7C8793; padding: 0 15px; color: black;}
 </style>

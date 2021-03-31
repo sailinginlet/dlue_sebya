@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import MapPage from '@/components/MapPage'
 import AuthPage from '@/components/AuthPage'
 import CalculatorPage from '@/components/CalculatorPage'
+import CostsPage from '@/components/CostsPage'
 import Footer from '@/components/Footer'
 
 Vue.use(Router)
@@ -28,6 +29,11 @@ export default new Router({
       path: '/Footer',
       name: 'Footer',
       component: Footer
+    },
+    {
+      path: '/CostsPage',
+      name: 'CostsPage',
+      component: CostsPage
     }
   ]
 })
